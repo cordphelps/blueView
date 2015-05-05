@@ -6,7 +6,8 @@
 
 ## this is a sandbox for checking the awesome API interface [BluetoothLE](https://github.com/randdusing/BluetoothLE). 
 
-The interface (3 jQuery Mobile pages) steps through the basic connectivity functions, displaying messages appropriately to a textarea in the app. 
+The interface (3 jQuery Mobile pages via PhoneGapBuild) steps through the basic connectivity functions, displaying status messages to a textarea in the app. 
+
 
 
 ## open issues:
@@ -16,8 +17,9 @@ The interface (3 jQuery Mobile pages) steps through the basic connectivity funct
 
 
 
-[![screen shot](https://raw.githubusercontent.com/cordphelps/tokenCheck/master/screenShot.png)]()
-
+[![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1564.jpg)]()
+[![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1565.jpg)]()
+[![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1566.jpg)]()
 
 
 
