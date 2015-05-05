@@ -38,7 +38,7 @@ subscribe(app.targetDevice.address, app.targetDevice.service, app.targetDevice.c
 write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, bytes);
 ```
 
-per [the open issue](https://github.com/randdusing/BluetoothLE/issues/154), these are hardcoded.
+per [the open issue](https://github.com/randdusing/BluetoothLE/issues/154), these params are hardcoded.
 
 
 ## open issue:
