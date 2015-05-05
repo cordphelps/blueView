@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bluetooth LE Example</title>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/mobileStyle.css" />
+
+    <script type="text/javascript" src="js/vendor/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index-ble.js"></script>
+    <script type="text/javascript" src="js/blue.js"></script>
+
+    <script>
+
+      $(document).bind("mobileinit",  function() {
+
+        mobileinit = true;
+
+        // app.initialize();
+
+        console.log("cc");
+
+      });
+
+    </script>
+
+
+    <script type="text/javascript" src="js/vendor/jquery.mobile-1.4.3.min.js"></script>
+  </head>
+
+  <body>
+
+    <div id="start" data-role="page" data-fullscreen="true" data-theme="c" data-dom-cache="true">
+    	<div data-role="header" data-fullscreen="true" id="startHeader" class="headerClass" > 
+
+    		<div class="headerGrid ui-grid-b" >  <!-- 3 column grid -->
+
+      		<div class="ui-block-a" >
+            <button data-inline="true" id="initMe" class="ui-btn ui-corner-all ">init ble</button>
+      		</div>
+
+      		<div class="ui-block-b" > 
+            <button data-inline="true" id="scanMe" class="ui-btn ui-corner-all ">scan</button>
+             
+      		</div>
+
+      		<div class="ui-block-c" >
+            
+      		</div>
+
+    		</div>
+
+  		</div>
+
+      	<div data-role="content">
+      	
+
+
+    		<div class="pageGrid ui-grid-b"> <!-- using 3 columns to center the button -->
+
+      		<div class="ui-block-a" >  <!--  -->
+
+      		</div> <!-- end block -->
+
+      		<div class="ui-block-b  ui-corner-all" style="margin-left:10%;width:80%">  <!-- column 2 -->
+
+            <div id="sensorPackSelectWrap">
+        <label for="select-sensorPack" class="select"></label>
+          <select name="select-sensorPack" id="select-sensorPack" >
+            <option value="0">'init ble' then 'scan'</option>
+            <option value="1">then select device</option>
+          </select>
+        </div>
+
+        <label for="blueLog"></label>
+        <textarea name="blueLog" id="blueLog" data-autogrow="true">
+I'm a basic textarea. 
+        </textarea>  
+                 
+
+
+      		</div> <!-- end block -->
+
+      		<div class="ui-block-c" >  <!--  -->
+      		</div> <!-- end block -->
+
+    		</div> <!-- end grid --> 
+
+    	</div>
+
+  	<div id='startFooter' data-role="footer" class="footerClass" data-position="fixed" data-tap-toggle="false"> 
+
+    	<div class="footerGrid ui-grid-b" >
+
+        <div class="ui-block-a" >
+        </div>
+
+      	<div class="ui-block-b" >
+        <button data-inline="true" id="clearLogBtn" class="ui-btn ui-corner-all ui-icon-grid ">clear log</button>
+      	</div>
+
+      	<div class="ui-block-c" >
+        <button data-inline="true" id="nextBtn" class="ui-btn ui-corner-all ui-icon-grid ">next</button>
+      	</div>
+
+    	</div> <!-- end grid --> 
+
+  	</div> <!-- end footer -->
+
+    <script>
+
+
+
+    $("#initMe").click(function() {
+
+      console.log("init ");
+
+      initialize();  // ble
+
+
+      //var address = getAddress($(this));
+    
+      //connect(address);
+    
+      return false;
+    
+      }); // end  click
+  
+
+    $("#scanMe").click(function() {
+
+      updateLog('blueLog', "setting scan timeout ");
+
+      setTimeout(function(){stopScan(); updateLog('blueLog', "scan timeout")}, SCAN_DURATION);
+
+      startScan();
+
+      return false;
+    
+      }); // end  click
+
+
+    $("#clearLogBtn").click(function() {
+
+      clearLog('blueLog');
+    
+    }); // end  click
+
+
+
+    $("#nextBtn").click(function() {
+
+      $.mobile.changePage($("#connectPage"), { transition: 'slide', reverse: false });
+
+    }); // end  click
+
+
+
+
+  </script>
+
+
+    </div>  <!-- end of page -->
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <div id="readWrite" data-role="page" data-fullscreen="true" data-theme="c" data-dom-cache="true">
+      <div data-role="header" data-fullscreen="true" id="readWriteHeader" class="headerClass" > 
+
+        <div class="headerGrid ui-grid-b" >  <!-- 3 column grid -->
+
+          <div class="ui-block-a" >
+            <button data-inline="true" id="subscribeBtn" class="ui-btn ui-corner-all ui-icon-grid ">subscribe</button>
+          </div>
+
+          <div class="ui-block-b" > 
+             
+          </div>
+
+          <div class="ui-block-c" >
+            
+          </div>
+
+        </div>
+
+      </div>
+
+      <div data-role="content">
+
+        <div class="pageGrid ui-grid-b"> <!-- using 3 columns to center the button -->
+
+          <div class="ui-block-a" >  <!--  -->
+
+          </div> <!-- end block -->
+
+          <div class="ui-block-b  ui-corner-all" style="margin-left:10%;width:80%">  <!-- column 2 -->
+
+        
+
+        <label for="send"></label>
+        <textarea name="send" id="send" data-autogrow="true">send</textarea>  
+
+        <button data-inline="true" id="sendItBtn" class="ui-btn ui-corner-all ui-icon-grid ">send it</button>
+                 
+        <label for="receive"></label>
+        <textarea name="receive" id="receive" data-autogrow="true">receive</textarea> 
+
+          </div> <!-- end block -->
+
+          <div class="ui-block-c" >  <!--  -->
+          </div> <!-- end block -->
+
+        </div> <!-- end grid --> 
+
+      </div>
+
+    <div id='readWriteFooter' data-role="footer" class="footerClass" data-position="fixed" data-tap-toggle="false"> 
+
+      <div class="footerGrid ui-grid-b" >
+
+        <div class="ui-block-a" >
+          <button data-inline="true" id="readWriteBackBtn" class="ui-btn ui-corner-all ui-icon-grid ">back</button>
+        </div>
+
+        <div class="ui-block-b" >
+        <button data-inline="true" id="clearReadWriteBtn" class="ui-btn ui-corner-all ui-icon-grid ">clear log</button>
+        </div>
+
+        <div class="ui-block-c" >
+        
+        </div>
+
+      </div> <!-- end grid --> 
+
+    </div> <!-- end footer -->
+
+    <script>
+
+
+
+    $("#subscribeBtn").click(function() {
+
+
+      clearLog('receive');
+
+      buttonColor('subscribeBtn', colorGreen);
+
+      //writeDescriptor(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, app.targetDevice.characteristic_uuid_descriptor, bytes);
+
+      subscribe(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_tx);
+
+    
+      }); // end  click
+
+
+
+    $("#sendItBtn").click(function() {
+
+      var bytes = bluetoothle.stringToBytes ( $('#send').val() );
+
+      //alert("sending: " + chars);
+
+      clearLog('receive');
+
+      buttonColor('sendItBtn', colorGreen);
+
+      //writeDescriptor(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, app.targetDevice.characteristic_uuid_descriptor, bytes);
+
+      write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, bytes);
+
+      $('#send').val('sent: ' + JSON.stringify(bytes));
+
+      buttonColor('sendItBtn', colorWhite);
+    
+      }); // end  click
+  
+
+
+    $("#clearReadWriteBtn").click(function() {
+
+      clearLog('send');
+      clearLog('receive');
+
+      buttonColor('sendItBtn', colorWhite);
+    
+    }); // end  click
+
+
+
+    $("#readWriteBackBtn").click(function() {
+
+      $.mobile.changePage($("#connectPage"), { transition: 'slide', reverse: false });
+
+    }); // end  click
+
+
+
+
+  </script>
+
+
+    </div>  <!-- end of page -->
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<div data-role="page" id="connectPage" data-fullscreen="true" data-theme="c" data-dom-cache="true">
+
+  <div data-role="header" data-fullscreen="true" id="connectHeader" class="headerClass" > 
+
+    <div class="headerGrid ui-grid-d" >  <!-- 5 column grid -->
+
+      <div class="ui-block-a" >
+        <button data-inline="true" id="connectMe" class="ui-btn ui-corner-all ">connect</button>
+      </div>
+      <div class="ui-block-b ui-btn ui-corner-all" ></div> <!-- end block -->
+      <div class="ui-block-c" >  <!--  -->
+        <button data-inline="true" id="reconnectMe" class="ui-btn ui-corner-all ">recon</button>
+      </div> <!-- end block -->
+      <div class="ui-block-d" ></div>
+      <div class="ui-block-e" >
+        <button data-inline="true" id="disconnectMe" class="ui-btn ui-corner-all ">discon</button>
+      </div>
+
+    </div>
+
+  </div>
+  
+
+<div id='connectContent' class='pageContent' data-role="content" style="padding:1px">
+
+        <div class="pageGrid ui-grid-b" >  <!-- 3 column grid -->
+
+          <div class="ui-block-a" >
+            <button data-inline="true" id="getServices" class="ui-btn ui-corner-all ">get</button>
+          </div>
+
+          <div class="ui-block-b" >
+            <button data-inline="true" id="showServices" class="ui-btn ui-corner-all ">show</button>
+          </div>
+
+          <div class="ui-block-c" >
+            <button data-inline="true" id="dumpObject" class="ui-btn ui-corner-all ">dump</button>
+          </div>
+
+        </div>
+
+    <!-- ////////////////////////       center the textArea      //////////////////////// -->
+
+    <div class="pageGrid ui-grid-b"> <!-- using 3 columns to center the button -->
+
+      <div class="ui-block-a" >  <!--  -->
+
+      </div> <!-- end block -->
+
+      <div class="ui-block-b  ui-corner-all" style="margin-left:10%;width:80%">  <!-- column 2 -->
+
+            <label for="discoverStatus"></label>
+            <textarea name="discoverStatus" id="discoverStatus" data-autogrow="true">
+              use the header buttons to 'connect'
+              then
+              'get' to scrape data
+              'show' to organize it
+              'dump' to see the data structure
+            </textarea>  
+
+      </div> <!-- end block -->
+
+      <div class="ui-block-c" >  <!--  -->
+      </div> <!-- end block -->
+
+    </div> <!-- end grid --> 
+
+  </div> <!-- end of content -->
+
+
+  <div id='connectFooter' data-role="footer" class="footerClass" data-position="fixed" data-tap-toggle="false">
+
+    <div class="footerGrid ui-grid-b" >
+
+      <div class="ui-block-a" >
+        <button data-inline="true" id="connectBackBtn" data-icon="back" class="ui-btn ui-corner-all ">back</button>
+      </div>
+
+      <div class="ui-block-b" >       
+        <button data-inline="true" id="clearStatusBtn" class="ui-btn ui-corner-all ui-icon-grid ">clearResp</button>
+      </div>
+
+      <div class="ui-block-c" > 
+        <button data-inline="true" id="sendPageBtn" class="ui-btn ui-corner-all ui-icon-grid ">next</button>
+      </div>
+
+    </div> <!-- end grid --> 
+
+
+  </div> <!-- end footer -->
+
+    <script>
+
+
+    $("#connectMe").click(function() {
+
+      buttonColor('showServices', colorWhite);
+      buttonColor('getServices', colorWhite);
+      buttonColor('dumpObject', colorWhite);
+      clearLog('discoverStatus');
+
+      // alert("address:\n" + app.targetDevice.address);
+
+      if (app.targetDevice.address.length < 20) {   // sample address: 12345678-1234-1234-1234-123456789012  ()
+
+        updateLog('discoverStatus', 'address looks strange: ' + app.targetDevice.address);
+        buttonColor('connectMe', colorRed);
+
+      } else {
+
+        updateLog('discoverStatus', 'connecting to address: ' + app.targetDevice.address);
+
+        connect(app.targetDevice.address);
+      }
+    
+    }); // end  click
+
+
+    $("#reconnectMe").click(function() {
+
+      buttonColor('showServices', colorWhite);
+      buttonColor('getServices', colorWhite);
+      buttonColor('dumpObject', colorWhite);
+      clearLog('discoverStatus');
+    
+      reconnect(app.targetDevice.address);
+    
+    }); // end  click
+  
+
+    $("#disconnectMe").click(function() {
+
+      buttonColor('showServices', colorWhite);
+      buttonColor('getServices', colorWhite);
+      buttonColor('dumpObject', colorWhite);
+      clearLog('discoverStatus');
+    
+      disconnect(app.targetDevice.address);
+    
+    }); // end  click
+
+
+    $("#getServices").click(function() {
+
+      buttonColor('getServices', colorGreen);
+      buttonColor('showServices', colorWhite);
+      buttonColor('dumpObject', colorWhite);
+
+      clearLog('discoverStatus');
+
+      services(app.targetDevice.address);
+
+    }); // end  click
+
+    $("#showServices").click(function() {
+
+      // show all detail gathered for each service
+
+      buttonColor('showServices', colorGreen);
+      buttonColor('getServices', colorWhite);
+      buttonColor('dumpObject', colorWhite);
+
+      clearLog('discoverStatus');
+
+      show();
+
+    }); // end  click
+
+
+    $("#dumpObject").click(function() {
+
+      buttonColor('showServices', colorWhite);
+      buttonColor('getServices', colorWhite);
+      buttonColor('dumpObject', colorGreen);
+
+      clearLog('discoverStatus');
+      updateLog('discoverStatus', JSON.stringify(app.targetDevice));
+
+    });
+
+
+    $("#connectBackBtn").click(function() {
+
+      $.mobile.changePage($("#start"), { transition: 'slide', reverse: false });
+
+    }); // end  click
+
+
+    $("#clearStatusBtn").click(function() {
+
+      clearLog('discoverStatus');
+    
+    }); // end  click
+
+    $("#sendPageBtn").click(function() {
+
+      $.mobile.changePage($("#readWrite"), { transition: 'slide', reverse: true });
+
+    }); // end  click
+
+
+  </script>
+
+
+</div> <!-- end of page -->
+
+
+
+ <script>
+
+  app.initialize();
+
+  selectSetup();
+
+
+ </script>
+
+
+  </body>
+</html>

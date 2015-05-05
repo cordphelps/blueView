@@ -1,0 +1,88 @@
+
+
+
+.pageContent { 
+	overflow: hidden;
+	padding:1px !important;
+	background-color:#eaeaea;
+}
+
+.headerClass {
+	/* height: 9%;   at 10%, rounding error may be responsible for obscuring google map terms and conditions... */
+	background-color:#989898;
+}
+
+.footerClass {
+	/* height: 9%; */
+	background-color:#989898;
+
+}
+
+
+.userBtn {
+	/* padding: 0; */
+	/* margin-top: 0; */
+	margin: 1px auto 1px auto;
+	top: 0;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+
+
+.smallPrint {
+	/* font-size: .8em;  <-- adjusted in js  */
+	text-align: justify; /* http://v1.jontangerine.com/silo/typography/p/  */
+}
+
+
+
+
+/**********************************************************************************************/
+/**********************************************************************************************/
+
+
+html,body {
+    text-align: center; /* seems to center all div content */
+    overflow: hidden; /* from iscroll5 barebones */
+}
+
+
+/* Get rid of shadows for performance */
+/* http://stackoverflow.com/questions/17286307/jquery-mobile-phonegap-vertical-scrolling-choppy-harder */
+.ui-bar-a 
+.ui-shadow,
+.ui-btn-up-a,
+.ui-btn-hover-a,
+.ui-btn-down-a,
+.ui-body-b,
+.ui-btn-up-b,
+.ui-btn-hover-b,
+.ui-btn-down-b,
+.ui-bar-c,
+.ui-body-c,
+.ui-btn-up-c,
+.ui-btn-hover-c,
+.ui-btn-down-c,
+.ui-bar-c,
+.ui-body-d,
+.ui-btn-up-d,
+.ui-btn-hover-d,
+.ui-btn-down-d,
+.ui-bar-d,
+.ui-body-e,
+.ui-btn-up-e,
+.ui-btn-hover-e,
+.ui-btn-down-e,
+.ui-bar-e,
+.ui-overlay-shadow,
+.ui-shadow,
+.ui-btn-active,
+.ui-body-a {
+    text-shadow: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+
+
+

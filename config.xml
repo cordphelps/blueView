@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns   = "http://www.w3.org/ns/widgets"
+        xmlns:gap   = "http://phonegap.com/ns/1.0"
+        id          = "com.irrigavi.irrigavi"
+        versionCode = "10" 
+        version     = "1.0.0" >
+        <!-- versionCode is optional and Android only -->
+
+    <preference name="phonegap-version" value="3.7.0" />
+
+    <name>irrigavi</name>
+
+    <gap:platform name="ios" />
+
+    <!--  <gap:platform name="android" /> -->
+
+
+    <description>
+        redbear tester  
+    </description>
+
+    <author href="https://github.com/cordphelps" email="rc.phelps@gmail.com">
+        Cord Phelps 
+    </author>
+
+
+    <preference name="orientation" value="default" />
+    <preference name="Fullscreen" value="true" />
+    <!-- http://www.youtube.com/watch?v=f5cjphChWwY -->
+    <gap:plugin name="com.phonegap.plugin.statusbar" version="1.1.0" />
+
+    <!-- iOS only 
+    http://docs.build.phonegap.com/en_US/2.9.0/configuring_preferences.md.html -->
+    <preference name="target-device" value="handset" />
+    <!-- http://stackoverflow.com/questions/13521406/phonegap-targeting-only-iphone-not-ipad -->
+    <!-- http://stackoverflow.com/questions/11207350/restrict-mobile-application-on-app-store -->
+
+    <preference name="prerendered-icon" value="true" />
+    <preference name="exit-on-suspend" value="true" />
+    <!-- android only -->
+    <preference name="splash-screen-duration" value="10000"/>
+    <!-- allow app to load assets from all *.phongap.com domains -->
+    <!-- -->
+    <access origin="http://phonegap.com" subdomains="true" />
+    <access origin="http://code.jquery.com" subdomains="true" />
+
+    <access origin="https://googleapis.com" subdomains="true" /> 
+    <access origin="https://gstatic.com" subdomains="true" />
+
+
+    <gap:plugin name="org.apache.cordova.device" source="pgb" />
+
+    <gap:plugin name="com.randdusing.bluetoothle" version="2.0.0" />
+
+
+    <gap:plugin name="org.apache.cordova.network-information" source="pgb" />
+        <feature name="NetworkStatus">
+            <param name="ios-package" value="CDVConnection" />
+        </feature>
+
+
+    <gap:plugin name="org.apache.cordova.dialogs" version="0.2.6" source="pgb" />
+        <feature name="Notification">
+            <param name="ios-package" value="CDVNotification" />
+        </feature>
+
+    <gap:plugin name="org.apache.cordova.splashscreen" source="pgb" />
+        <feature name="SplashScreen">
+            <param name="ios-package" value="CDVSplashScreen" />
+            <param name="onload" value="true" />
+            <param name="AutoHideSplashScreen" value="false" />
+            <preference name="AutoHideSplashScreen" value="false" />
+            <preference name="splash-screen-duration" value="10000" />
+        </feature>
+
+
+</widget>
