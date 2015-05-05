@@ -4,7 +4,7 @@
 
 
 
-## this is a sandbox for checking the awesome API interface [BluetoothLE](https://github.com/randdusing/BluetoothLE). 
+## this is a sandbox for checking the awesome API [BluetoothLE](https://github.com/randdusing/BluetoothLE) against a ReadBearLabs BLE Shield 2.1 .
 
 The interface (3 jQuery Mobile pages via PhoneGapBuild) steps through the basic connectivity functions, displaying status messages to a textarea in the app. 
 
@@ -16,9 +16,18 @@ The interface (3 jQuery Mobile pages via PhoneGapBuild) steps through the basic 
 
 
 
+### initialize and scan for bluetooth devices; select one
 
 [![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1564.jpg)]()
+
+
+### connect to the selected device (optionally surf available data)
+
 [![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1565.jpg)]()
+
+
+### subscribe / send data
+
 [![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_1566.jpg)]()
 
 
