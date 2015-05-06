@@ -48,6 +48,9 @@ and
 characteristics(obj.address, serviceUuids[i]);
 ```
 
+the 'property' reported for UUID 713d0003----- is 'writeWithoutResponse:true'
+and the 'property' for UUID 713d0002----- is 'notify:true'
+
 
 ## problem:
 
