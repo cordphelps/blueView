@@ -41,7 +41,7 @@ write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.chara
 per [the open issue](https://github.com/randdusing/BluetoothLE/issues/154), these params are hardcoded.
 
 
-## open issue:
+## problem:
 
 - I can't subscribe() or write() to the published ReadBear (BLE Shield 2.1) service "713d0000-503e-4c75-ba94-3148f18d941e", error reported is 'service not found'
 
