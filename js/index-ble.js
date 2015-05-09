@@ -14,8 +14,8 @@ var app = {
     address: "",
 
     service:           "713d0000-503e-4c75-ba94-3148f18d941e",
-    characteristic_tx: "713d0002-503e-4c75-ba94-3148f18d941e", 
-    characteristic_rx: "713d0003-503e-4c75-ba94-3148f18d941e",   
+    characteristic_tx: "713d0002-503e-4c75-ba94-3148f18d941e",   // subscribe/listen here
+    characteristic_rx: "713d0003-503e-4c75-ba94-3148f18d941e",   // write here
   
     services: [],
     connected: false
@@ -750,7 +750,9 @@ function characteristicsSuccess(obj) {
 
           app.targetDevice.services[j].characteristics[i].characteristicUuid = obj.characteristics[i].characteristicUuid;
 
-          // descriptors(obj.address, obj.serviceUuid, characteristics[i].characteristicUuid);
+
+          descriptors(obj.address, obj.serviceUuid, characteristics[i].characteristicUuid);
+
           //
           // redBear does not seem to report 'descriptors',
           // instead, we are getting 'properties' (as an object)
@@ -876,30 +878,30 @@ function read(address, serviceUuid, characteristicUuid)
 
 function readSuccess(obj) {
 
-	updateLog('receive', "Read Success : " + JSON.stringify(obj));
+	updateLog('txLog', "Read Success : " + JSON.stringify(obj));
 	
 	if (obj.status == "read") {
 
 		var bytes = bluetoothle.encodedStringToBytes(obj.value);
-		updateLog('receive', "Read : " + bytes[0]);
+		updateLog('txLog', "Read : " + bytes[0]);
 		
 	} else {
 
-  	updateLog('receive', "Unexpected Read Status");
+  	updateLog('txLog', "Unexpected Read Status");
 
   }
 }
 
 function readError(obj)
 {
-  updateLog('receive', "Read Error : " + JSON.stringify(obj));
+  updateLog('txLog', "Read Error : " + JSON.stringify(obj));
 }
 
 function subscribe(address, serviceUuid, characteristicUuid)
 {
 	var paramsObj = {address:address, serviceUuid:serviceUuid, characteristicUuid:characteristicUuid};
 	
-	updateLog('receive', "Subscribe : " + JSON.stringify(paramsObj));
+	updateLog('txLog', "Subscribe : " + JSON.stringify(paramsObj));
 	
 	bluetoothle.subscribe(subscribeSuccess, subscribeError, paramsObj);
 	
@@ -908,32 +910,49 @@ function subscribe(address, serviceUuid, characteristicUuid)
 
 function subscribeSuccess(obj)
 {	
-	updateLog('receive', "Subscribe Success : " + JSON.stringify(obj));
+	updateLog('txLog', "Subscribe Success : " + JSON.stringify(obj));
+
+  buttonColor('subscribeBtn', colorGreen);
 	
-	if (obj.status == "subscribedResult")
+	if (obj.status == "subscribedResult")   // subscription result received
 	{
-		updateLog('receive', "Subscribed Result");
+    updateLog('txLog', "\nvalue : " + obj.value + "\n");
+
+    var analogValue = base64parseRBLOneByteIntegerData(obj.value);
+
+    // since the arduino code is trying to report an analog value that is > 255, it
+    // cooperates by dividing by 4 before sending it. Multiply by 4 here to get the 
+    // correct value.
+
+    analogValue = analogValue * 4 ;
+
+    updateLog('receive', "\narduino onboard value : " + analogValue);
+
 	}
-	else if (obj.status == "subscribed")
+	else if (obj.status == "subscribed")   // subscription has started (we are listening)
 	{
-		updateLog('receive', "Subscribed");
+		updateLog('txLog', "Subscribed");
 	}
 	else
   {
-  	updateLog('receive', "Unexpected Subscribe Status");
+  	updateLog('txLog', "Unexpected Subscribe Status");
   }
 }
 
+
+
 function subscribeError(obj)
 {
-  updateLog('receive', "Subscribe Error : " + JSON.stringify(obj));
+  updateLog('txLog', "Subscribe Error : " + JSON.stringify(obj));
+
+  buttonColor('subscribeBtn', colorRed);
 }
 
 function unsubscribe(address, serviceUuid, characteristicUuid)
 {
 	var paramsObj = {address:address, serviceUuid:serviceUuid, characteristicUuid:characteristicUuid};
 	
-	updateLog('receive', "Unsubscribe : " + JSON.stringify(paramsObj));
+	updateLog('txLog', "Unsubscribe : " + JSON.stringify(paramsObj));
 	
 	bluetoothle.unsubscribe(unsubscribeSuccess, unsubscribeError, paramsObj);
 	
@@ -942,49 +961,54 @@ function unsubscribe(address, serviceUuid, characteristicUuid)
 
 function unsubscribeSuccess(obj)
 {
-	updateLog('receive', "Unsubscribe Success : " + JSON.stringify(obj));
+	updateLog('txLog', "Unsubscribe Success : " + JSON.stringify(obj));
 	
 	if (obj.status == "unsubscribed")
 	{
-		updateLog('receive', "Unsubscribed");
+		updateLog('txLog', "Unsubscribed");
 	}
 	else
 	{
-		updateLog('receive', "Unexpected Unsubscribe Status");
+		updateLog('txLog', "Unexpected Unsubscribe Status");
 	}
 }
 
 function unsubscribeError(obj)
 {
-	updateLog('receive', "Unsubscribe Error : " + JSON.stringify(obj));
+	updateLog('txLog', "Unsubscribe Error : " + JSON.stringify(obj));
 }
 
 function write(address, serviceUuid, characteristicUuid, value) {
 
-	var paramsObj = {address:address, serviceUuid:serviceUuid, characteristicUuid:characteristicUuid, value:value};
+	var paramsObj = {address:address, serviceUuid:serviceUuid, characteristicUuid:characteristicUuid, type:"noResponse", value:value};
+
+  // TODO investigate type:"noResponse" (seems required)
 	
-	updateLog('receive', "Write : " + JSON.stringify(paramsObj));
+	updateLog('txLog', "Write : " + JSON.stringify(paramsObj));
 	
 	bluetoothle.write(writeSuccess, writeError, paramsObj);
+
+  // not triggering writeSuccess() ; bug?
 	
-	return false;
 
 }
 
 function writeSuccess(obj) {
 
-	updateLog('receive', "Write Success : " + JSON.stringify(obj));
+	updateLog('txLog', "Write Success : " + JSON.stringify(obj));
 	
 	if (obj.status == "written") {
 
-		updateLog('receive', "Written");
+		updateLog('txLog', "Written");
+
+    buttonColor('sendItBtn', colorGreen);
 
     // address , service, characteristic
     read(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx);
 
 	} else {
 
-		updateLog('receive', "Unexpected Write Status");
+		updateLog('txLog', "Unexpected Write Status");
 
 	}
 
@@ -992,7 +1016,9 @@ function writeSuccess(obj) {
 
 function writeError(obj)
 {
-	updateLog('receive', "Write Error : " + JSON.stringify(obj));
+	updateLog('txLog', "Write Error : " + JSON.stringify(obj));
+
+  buttonColor('sendItBtn', colorRed);
 }
 
 function readDescriptor(address, serviceUuid, characteristicUuid, descriptorUuid)
@@ -1029,7 +1055,7 @@ function writeDescriptor(address, serviceUuid, characteristicUuid, descriptorUui
 {
 	var paramsObj = {address:address, serviceUuid:serviceUuid, characteristicUuid:characteristicUuid, descriptorUuid:descriptorUuid, value:value};
 	
-	updateLog('receive', "Write Descriptor : " + JSON.stringify(paramsObj));
+	updateLog('txLog', "Write Descriptor : " + JSON.stringify(paramsObj));
 	
 	bluetoothle.writeDescriptor(writeDescriptorSuccess, writeDescriptorError, paramsObj);
 	
@@ -1042,18 +1068,132 @@ function writeDescriptorSuccess(obj)
 	
 	if (obj.status == "writeDescriptor")
 	{
-		updateLog('receive', "Write Descriptor success");
+		updateLog('txLog', "Write Descriptor success");
 	}
 	else
   {
-  	updateLog('receive', "Unexpected Write Descriptor Status");
+  	updateLog('txLog', "Unexpected Write Descriptor Status");
   }
 }
 
 function writeDescriptorError(obj)
 {
-  updateLog('receive', "Write Descriptor Error : " + JSON.stringify(obj));
+  updateLog('txLog', "Write Descriptor Error : " + JSON.stringify(obj));
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+function base64parseRBLOneByteIntegerData(string) {
+
+  // base64 parse encoded integers sent by RBL from arduino to our BluetoothLE client
+  //
+  // expected incoming string format is two characters followed by two equal signs 'xx=='
+  // valid return is a positive integer
+  // error return is -1
+  //
+  // caution: if the source integer is > 255, then divide by 4 before sending from arduino, 
+  // and then multiply by 4 after decoding
+  // 
+  // beginning with an integer = 807 (for instance, a value from an analog port)
+  //
+  // RBL ble_write() on arduino encodes the value and sends it over the air as 'Jw=='
+  //
+  // notice that 807 in binary is :    0 0 0 0 0 0 1 1 0 0 1 0 0 1 1 1
+  //
+  // shift these 8 bits to the left :  0 0 1 0 0 1 1 1 0 0 0 0 0 0 0 0 
+  //
+  // now evaluate 6 bits at a time according to the base64 scheme
+  // http://en.wikipedia.org/wiki/Base64
+  //
+  //     -----------
+  //     0 0 1 0 0 1 1 1 0 0 0 0 0 0 0 0
+  //                 -----------
+  // 
+  // 0 0 1 0 0 1 = 9 decimal which maps to the base64 character 'J'
+  // 1 1 0 0 0 0 = 48 decimal which maps to the base64 character 'w'
+  //
+  // on the BluetoothLE side, we, in fact, receive the characters 'Jw==' as obj.value
+  // BUT, because the value is > 255, we can't convert back to 807 because a 
+  // meaningful bit was lost in the shift. (So, divide the source integer by 4 before sending it.)
+
+
+  // chop off trailing '=='   (per the base64 standard, these indicate the last base64 group contained only one byte)
+  var trimmed = string.replace(/==$/, "");
+  //updateLog('txLog', "trimmed : " + trimmed);
+
+  if (trimmed.length > 2) {
+    // can't handle that; doesn't look like a byte from arduino
+    return -1;
+  }
+
+  var firstCharacter = trimmed.charAt(0);
+  var secondCharacter = trimmed.charAt(1);
+
+  // find the base64 index for each character
+  var base64characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  var firstIndex = base64characters.indexOf(firstCharacter);
+  var secondIndex = base64characters.indexOf(secondCharacter);
+
+  //updateLog('txLog', "firstCharacter : " + firstCharacter + " index: " + firstIndex);
+  //updateLog('txLog', "secondCharacter : " + secondCharacter + " index: " + secondIndex);
+
+  var rawValue = base64IndicesToInt(firstIndex, secondIndex);
+
+  updateLog('txLog', "returning int: " + rawValue);
+
+  return rawValue;
+
+}
+
+function base64IndicesToInt (index1, index2) {
+
+  // base64 decode helper function
+  // take two base64 indicies (representing two characters)
+  // and decode them into an source integer.
+  //
+  // caution: there is no logic to detect an index that would indicate a value > 255
+  //
+
+  var binFirst = integerToEightBitBinaryLikeString(index1);
+  var binSecond = integerToEightBitBinaryLikeString(index2);
+  //alert(binFirst + "\n" + binSecond);
+
+  var joined = binFirst.concat(binSecond);
+  //alert("that should be 12 bits: " + joined);
+
+  var chopped = joined.substring(0,8);  // chop off the last 4 
+  var b = parseInt( chopped, 2 );       // convert bits to int
+  // alert("and the integer is:  " + b + " times 4: " + b*4);
+
+  return b;
+}
+
+function integerToEightBitBinaryLikeString(decimalIndex) {
+
+    // base64 decode helper function
+    // return 'bits' representing a decimal value padded to 6 bits
+
+    var zeros = "000000";
+    var bits = (decimalIndex >>> 0).toString(2);  // coerces argument to unsigned integer
+    var len = bits.length;
+    //alert(bits + "  len: " + len);
+    if (len < 6) {
+        var padding = zeros.substring(len);
+        var finalBitString = padding.concat(bits);
+    } else {
+        finalBitString = bits;
+    }
+    
+    //alert("padded bits: " + finalBitString);
+    
+    return finalBitString;
+}
+
 
 function addDevice(address, name)
 {

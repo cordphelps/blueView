@@ -205,12 +205,15 @@ I'm a basic textarea.
         
 
         <label for="send"></label>
-        <textarea name="send" id="send" data-autogrow="true">send</textarea>  
+        <textarea name="send" id="send" data-autogrow="true">send</textarea> 
 
         <button data-inline="true" id="sendItBtn" class="ui-btn ui-corner-all ui-icon-grid ">send it</button>
-                 
+
         <label for="receive"></label>
-        <textarea name="receive" id="receive" data-autogrow="true">receive</textarea> 
+        <textarea name="receive" id="receive" data-autogrow="true">receive</textarea>  
+                 
+        <label for="txLog"></label>
+        <textarea name="txLog" id="txLog" data-autogrow="true">txLog</textarea> 
 
           </div> <!-- end block -->
 
@@ -248,9 +251,9 @@ I'm a basic textarea.
     $("#subscribeBtn").click(function() {
 
 
-      clearLog('receive');
+      clearLog('txLog');
 
-      buttonColor('subscribeBtn', colorGreen);
+      buttonColor('subscribeBtn', colorWhite);
 
       //writeDescriptor(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, app.targetDevice.characteristic_uuid_descriptor, bytes);
 
@@ -263,21 +266,24 @@ I'm a basic textarea.
 
     $("#sendItBtn").click(function() {
 
+      buttonColor('sendItBtn', colorWhite);
+
+      updateLog('txLog', "\ncontent read: " + $('#send').val());
+
       var bytes = bluetoothle.stringToBytes ( $('#send').val() );
 
-      //alert("sending: " + chars);
+      var value = bluetoothle.bytesToEncodedString(bytes);
 
-      clearLog('receive');
+      updateLog('txLog', 'sending encoded string: ' + value);
 
-      buttonColor('sendItBtn', colorGreen);
+      // it looks like the error "write value not found" returned from writeError means that the value is not
+      // base64 encoded
 
-      //writeDescriptor(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, app.targetDevice.characteristic_uuid_descriptor, bytes);
 
-      write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, bytes);
+      write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, value);
 
-      $('#send').val('sent: ' + JSON.stringify(bytes));
 
-      buttonColor('sendItBtn', colorWhite);
+
     
       }); // end  click
   
@@ -287,6 +293,7 @@ I'm a basic textarea.
 
       clearLog('send');
       clearLog('receive');
+      clearLog('txLog');
 
       buttonColor('sendItBtn', colorWhite);
     
@@ -415,6 +422,9 @@ I'm a basic textarea.
       buttonColor('dumpObject', colorWhite);
       clearLog('discoverStatus');
 
+      buttonColor('subscribeBtn', colorWhite);
+      buttonColor('sendItBtn', colorWhite);
+
       // alert("address:\n" + app.targetDevice.address);
 
       if (app.targetDevice.address.length < 20) {   // sample address: 12345678-1234-1234-1234-123456789012  ()
@@ -438,6 +448,9 @@ I'm a basic textarea.
       buttonColor('getServices', colorWhite);
       buttonColor('dumpObject', colorWhite);
       clearLog('discoverStatus');
+
+      buttonColor('subscribeBtn', colorWhite);
+      buttonColor('sendItBtn', colorWhite);
     
       reconnect(app.targetDevice.address);
     
@@ -450,6 +463,9 @@ I'm a basic textarea.
       buttonColor('getServices', colorWhite);
       buttonColor('dumpObject', colorWhite);
       clearLog('discoverStatus');
+
+      buttonColor('subscribeBtn', colorWhite);
+      buttonColor('sendItBtn', colorWhite);
     
       disconnect(app.targetDevice.address);
     
@@ -464,7 +480,11 @@ I'm a basic textarea.
 
       clearLog('discoverStatus');
 
-      services(app.targetDevice.address);
+      if (iOS) {  // 'discovery' workflow varies by platform
+
+        services(app.targetDevice.address);
+
+      }
 
     }); // end  click
 
