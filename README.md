@@ -38,18 +38,7 @@ subscribe(app.targetDevice.address, app.targetDevice.service, app.targetDevice.c
 write(app.targetDevice.address, app.targetDevice.service, app.targetDevice.characteristic_rx, bytes);
 ```
 
-per [the open issue](https://github.com/randdusing/BluetoothLE/issues/154), these params are hardcoded. However, they do match the service and characteristic UUIDs reported by the BLE Shield using
-
-```
-bluetoothle.services(servicesSuccess, servicesError, paramsObj);
-```
-and
-```
-characteristics(obj.address, serviceUuids[i]);
-```
-
-the 'property' reported for UUID 713d0003----- is 'writeWithoutResponse:true'
-and the 'property' for UUID 713d0002----- is 'notify:true'
+[![screen shot](https://raw.githubusercontent.com/cordphelps/blueView/master/IMG_610.png)]()
 
 
 ## secret sauce:
