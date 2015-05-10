@@ -114,6 +114,53 @@ function base64parseRBLOneByteIntegerData(string) {
 }
 
 
+function base64IndicesToInt (index1, index2) {
+
+  // base64 decode helper function
+  // take two base64 indicies (representing two characters)
+  // and decode them into an source integer.
+  //
+  // caution: there is no logic to detect an index that would indicate a value > 255
+  //
+
+  var binFirst = integerToEightBitBinaryLikeString(index1);
+  var binSecond = integerToEightBitBinaryLikeString(index2);
+  //alert(binFirst + "\n" + binSecond);
+
+  var joined = binFirst.concat(binSecond);
+  //alert("that should be 12 bits: " + joined);
+
+  var chopped = joined.substring(0,8);  // chop off the last 4 
+  var b = parseInt( chopped, 2 );       // convert bits to int
+  // alert("and the integer is:  " + b + " times 4: " + b*4);
+
+  return b;
+}
+
+
+function integerToEightBitBinaryLikeString(decimalIndex) {
+
+    // base64 decode helper function
+    // return 'bits' representing a decimal value padded to 6 bits
+
+    var zeros = "000000";
+    var bits = (decimalIndex >>> 0).toString(2);  // coerces argument to unsigned integer
+    var len = bits.length;
+    //alert(bits + "  len: " + len);
+    if (len < 6) {
+        var padding = zeros.substring(len);
+        var finalBitString = padding.concat(bits);
+    } else {
+        finalBitString = bits;
+    }
+    
+    //alert("padded bits: " + finalBitString);
+    
+    return finalBitString;
+}
+
+
+
 ```
 
 
