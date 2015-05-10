@@ -1159,8 +1159,8 @@ function base64IndicesToInt (index1, index2) {
   // caution: there is no logic to detect an index that would indicate a value > 255
   //
 
-  var binFirst = integerToEightBitBinaryLikeString(index1);
-  var binSecond = integerToEightBitBinaryLikeString(index2);
+  var binFirst = integerToSixBitBinaryLikeString(index1);
+  var binSecond = integerToSixBitBinaryLikeString(index2);
   //alert(binFirst + "\n" + binSecond);
 
   var joined = binFirst.concat(binSecond);
@@ -1173,7 +1173,7 @@ function base64IndicesToInt (index1, index2) {
   return b;
 }
 
-function integerToEightBitBinaryLikeString(decimalIndex) {
+function integerToSixBitBinaryLikeString(decimalIndex) {
 
     // base64 decode helper function
     // return 'bits' representing a decimal value padded to 6 bits
