@@ -4,10 +4,10 @@
 
 
 
-### this is an iOS sandbox for checking the awesome API [BluetoothLE](https://github.com/randdusing/BluetoothLE) against a RedBearLabs bluetooth BLE Shield 2.1 for arduino.
+### this is an iOS sandbox for checking the awesome API [BluetoothLE](https://github.com/randdusing/BluetoothLE) against a RedBearLabs bluetooth [BLE Shield 2.1](https://github.com/RedBearLab/BLEShield) for arduino.
 
 
-The interface (3 jQuery Mobile pages via PhoneGapBuild) steps through the basic connectivity functions, displaying status messages to a textarea in the app. 
+The interface (3 jQuery Mobile pages via [PhoneGapBuild](https://build.phonegap.com/)) steps through the basic connectivity functions, displaying status messages to a textarea in the app. 
 
 The code then demonstrates how to send, and, importantly, how to receive and decode an integer sent from the arduino.
 
